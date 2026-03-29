@@ -1,0 +1,30 @@
+"""Configuration via environment variables."""
+
+from pathlib import Path
+
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    # Database
+    db_path: str = "data/kline.db"
+
+    # Server
+    port: int = 8100
+
+    # TuShare Pro (required for A-shares)
+    tushare_token: str = ""
+
+    # Provider timeouts (seconds)
+    request_timeout: int = 30
+
+    model_config = {"env_prefix": "KLINE_", "env_file": ".env", "extra": "ignore"}
+
+
+def get_settings() -> Settings:
+    return Settings()
+
+
+# Ensure data directory exists
+def ensure_data_dir(settings: Settings) -> None:
+    Path(settings.db_path).parent.mkdir(parents=True, exist_ok=True)
